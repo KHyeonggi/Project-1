@@ -1,110 +1,138 @@
-class Calulcator {
-    $previousPreview = ''
-    $currentPreview = ''
+class Caluculator {
+    $previousPriviewPrompt = ''
+    $currentPriviewPrompt = ''
     previousOperation = ''
     currentOperation = ''
 
-    constructor($previousPreview, $currentPreview) {
-        this.$previousPreview = $previousPreview
-        this.$currentPreview = $currentPreview
+    constructor($previousPriview, $currentPriview) {
+        this.$previousPriviewPrompt = $previousPriview
+        this.$currentPriviewPrompt = $currentPriview
     }
 
+    // 숫자입력
     onPressNumber(number) {
-        this.$currentPreview.textContent += number
+        this.$currentPriviewPrompt.textContent += number
     }
 
     onPressOperation(operation) {
-        this.$previousPreview.textContent =
-            this.$currentPreview.textContent + ' ' + operation
-        this.$currentPreview.textContent = ''
+        this.$previousPriviewPrompt.textContent =
+            this.$currentPriviewPrompt.textContent + ' ' + operation
+        this.$currentPriviewPrompt.textContent = ''
+
         this.previousOperation = operation
     }
 
     onEqual() {
-        const operation = this.previousOperation.trim()
         let result = 0
 
-        if (operation === '+') {
-            result =
-                +this.$previousPreview.textContent.split(' ')[0] +
-                +this.$currentPreview.textContent
-        } else if (operation === '-') {
-            result =
-                +this.$previousPreview.textContent.split(' ')[0] -
-                +this.$currentPreview.textContent
-        } else if (operation === '*') {
-            result =
-                +this.$previousPreview.textContent.split(' ')[0] *
-                +this.$currentPreview.textContent
-        } else if (operation === '÷') {
-            result =
-                +this.$previousPreview.textContent.split(' ')[0] /
-                +this.$currentPreview.textContent
+        switch (this.previousOperation) {
+            case '+':
+                result = this.handlePlus()
+                break
+            case '-':
+                result = this.handleMinus()
+                break
+            case 'x':
+                result = this.handleMultifly()
+                break
+            case '÷':
+                result = this.handleDivide()
+                break
+            default:
+                break
         }
 
-        this.$previousPreview.textContent = ''
-        this.$currentPreview.textContent = result.toString()
+        this.$previousPriviewPrompt.textContent = ''
+        this.$currentPriviewPrompt.textContent = result.toString()
         this.currentOperation = ''
     }
 
+    handlePlus() {
+        return (
+            +this.$previousPriviewPrompt.textContent.split(' ')[0] +
+            +this.$currentPriviewPrompt.textContent
+        )
+    }
+    handleMinus() {
+        return (
+            +this.$previousPriviewPrompt.textContent.split(' ')[0] -
+            +this.$currentPriviewPrompt.textContent
+        )
+    }
+    handleMultifly() {
+        return (
+            +this.$previousPriviewPrompt.textContent.split(' ')[0] *
+            +this.$currentPriviewPrompt.textContent
+        )
+    }
+    handleDivide() {
+        return (
+            +this.$previousPriviewPrompt.textContent.split(' ')[0] /
+            +this.$currentPriviewPrompt.textContent
+        )
+    }
+
     onReset() {
-        this.$previousPreview.textContent = ''
-        this.$currentPreview.textContent = ''
+        this.$previousPriviewPrompt.textContent = ''
+        this.$currentPriviewPrompt.textContent = ''
         this.previousOperation = ''
         this.currentOperation = ''
     }
 
     onDelete() {
-        this.$currentPreview.textContent =
-            this.$currentPreview.textContent.slice(0, -1)
+        this.$currentPriviewPrompt.textContent =
+            this.$currentPriviewPrompt.textContent.slice(0, -1)
     }
 }
 
-// DOM
 // 사칙연산
 const $plus = document.querySelector('[data-btn-plus]')
 const $minus = document.querySelector('[data-btn-minus]')
 const $divide = document.querySelector('[data-btn-divide]')
 const $multifly = document.querySelector('[data-btn-multifly]')
-
-// 연산
 const $equal = document.querySelector('[data-btn-equal]')
 
-// 전체삭제(AC), 삭제
+// AC, DEL
 const $reset = document.querySelector('[data-btn-reset]')
 const $delete = document.querySelector('[data-btn-delete]')
 
-// 숫자, 연산
+// 숫자 및 연산
 const $numbers = document.querySelectorAll('[data-btn-number]')
 const $operations = document.querySelectorAll('[data-btn-operation]')
 
 // 프롬프트
-const $previousPreview = document.querySelector('[data-previous-preview]')
-const $currentPreview = document.querySelector('[data-current-preview]')
+const $previousPriview = document.querySelector('[data-previous-preview]')
+const $currentPriview = document.querySelector('[data-current-preview]')
+const calc = new Caluculator($previousPriview, $currentPriview)
 
-// 연산 처리
-const calc = new Calulcator($previousPreview, $currentPreview)
-
+// 숫자 선택
 $numbers.forEach(($number) => {
     $number.addEventListener('click', (e) => {
         calc.onPressNumber(e.target.textContent)
     })
 })
 
+// 연산자 선택
 $operations.forEach(($operation) => {
     $operation.addEventListener('click', (e) => {
-        if (e.target.textContent.trim() === '=') {
-            calc.onEqual()
-        } else {
-            calc.onPressOperation(e.target.textContent)
+        if (e.target.textContent === '+') {
+            calc.onPressOperation('+')
+        } else if (e.target.textContent === '-') {
+            calc.onPressOperation('-')
+        } else if (e.target.textContent === 'x') {
+            calc.onPressOperation('x')
+        } else if (e.target.textContent === '÷') {
+            calc.onPressOperation('÷')
+        } else if (e.target.textContent.trim() === '=') {
+            calc.onEqual('=')
         }
     })
 })
 
+//리셋, 삭제
 $reset.addEventListener('click', (e) => {
     calc.onReset()
 })
-
 $delete.addEventListener('click', (e) => {
     calc.onDelete()
 })
